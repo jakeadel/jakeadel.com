@@ -1,0 +1,20 @@
+
+.cell {
+    width: 15px; /* match your cellSize */
+    height: 15px; /* match your cellSize */
+    border: 1px solid #ccc; /* Light border for cells */
+}
+
+.alive {
+    background-color: black;
+}
+
+.dead {
+    background-color: white;
+}
+
+.wrapper {
+    justify-content: center;
+    display: grid;
+    text-align: center;
+}
