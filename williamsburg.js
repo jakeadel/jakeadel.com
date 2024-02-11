@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const canvas = document.getElementById('animationCanvas');
+    const canvas = document.getElementById('bridgeCanvas');
     const ctx = canvas.getContext('2d');
     canvas.width = 800; // Adjust as needed
     canvas.height = 400; // Adjust as needed
@@ -17,8 +17,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const trainCars = [
         {x: trainX, y: bridgeY - trainHeight, bumpOffset: 0}, // Engine
         // Additional cars, initially positioned behind the engine
-        {x: trainX - trainWidth - 10, y: bridgeY - trainHeight, bumpOffset: 0}, // Car 1
-        {x: trainX - 2 * (trainWidth + 10), y: bridgeY - trainHeight, bumpOffset: 0}, // Car 2
+        {x: trainX - trainWidth - 10, y: bridgeY - trainHeight, bumpOffset: 0},
+        {x: trainX - 2 * (trainWidth + 10), y: bridgeY - trainHeight, bumpOffset: 0},
+        {x: trainX - 3 * (trainWidth + 10), y: bridgeY - trainHeight, bumpOffset: 0},
+        {x: trainX - 4 * (trainWidth + 10), y: bridgeY - trainHeight, bumpOffset: 0},
+        {x: trainX - 5 * (trainWidth + 10), y: bridgeY - trainHeight, bumpOffset: 0},
     ];
     // Function to draw the bridge
     function drawBridge() {
@@ -38,40 +41,38 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateBumps() {
         bumps.shift();
-        if (bumps.length <= trainCars.length) {
-
+        if (bumps.length <= trainCars.length * 60) {
             // Check if it's time to start a new bump
             if (Math.random() < 0.1) { // 10% chance to start a bump
                 // Start a new bump with initial strength
-                let initialOffset = getOffset(min, max) * 5 - 2.5;
-                bumps.push(initialOffset);
-                let currOffset = initialOffset;
-                let stopOffset = 0.25;
-                while (true) {
-                    if (Math.abs(currOffset) < stopOffset) {
-                        bumps.push(0);
-                        break;
-                    }
-                    else {
-                        currOffset = currOffset = currOffset * 0.5
-                        bumps.push(currOffset)
-                        bumps.push(currOffset)
-                        bumps.push(currOffset)
-                        bumps.push(currOffset)
+                let initialOffset = getOffset(min, max) * 10 - 2.5;
+                for (let car = 0; car < trainCars.length; car++) {
+                    let currOffset = initialOffset;
+                    let stopOffset = 0.25;
+
+                    while (true) {
+                        if (Math.abs(currOffset) < stopOffset) {
+                            bumps.push(0);
+                            break;
+                        }
+                        else {
+                            for (let i = 0; i < 60; i++) {
+                                bumps.push(currOffset)
+                            }
+                            currOffset = currOffset * 0.75
+                        }
                     }
                 }
-
-            } else {
-                // Ensure there's no abrupt start of a bump at the end of the array
+            } 
+            else {
                 bumps.push(0);
             }
         }
-        // Shift the bump effect down the train
-        console.log(bumps)
     }
     
     function drawTrainWithCars() {
         updateBumps();
+        console.log(bumps)
     
         for (let i = 0; i < trainCars.length; i++) {
             trainCars[i].x += 1;
@@ -79,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 trainCars[i].x = -trainWidth; // Reset the car to start
             }
             // Apply the bump offset from the bumps array
-            trainCars[i].bumpOffset = bumps[trainCars.length - i - 1];
+            trainCars[i].bumpOffset = bumps[(trainCars.length - i - 1) * 60];
     
             ctx.fillStyle = '#FF0000'; // Red train car
             ctx.fillRect(trainCars[i].x, trainCars[i].y + trainCars[i].bumpOffset, trainWidth, trainHeight);
