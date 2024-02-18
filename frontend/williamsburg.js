@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const canvas = document.getElementById('bridgeCanvas');
     const ctx = canvas.getContext('2d');
-    canvas.width = 800; // Adjust as needed
-    canvas.height = 400; // Adjust as needed
+    canvas.width = 800;
+    canvas.height = 400;
 
     const bridgeY = canvas.height / 2;
     const trainWidth = 50;
@@ -13,10 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const min = 1
     const max = 10
 
-    // Define a train with multiple cars
     const trainCars = [
-        {x: trainX, y: bridgeY - trainHeight, bumpOffset: 0}, // Engine
-        // Additional cars, initially positioned behind the engine
         {x: trainX - trainWidth - 10, y: bridgeY - trainHeight, bumpOffset: 0},
         {x: trainX - 2 * (trainWidth + 10), y: bridgeY - trainHeight, bumpOffset: 0},
         {x: trainX - 3 * (trainWidth + 10), y: bridgeY - trainHeight, bumpOffset: 0},
@@ -36,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function getOffset(min, max) {
         const minCeiled = Math.ceil(min);
         const maxFloored = Math.floor(max);
-        return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled) * 0.1; // The maximum is inclusive and the minimum is inclusive
+        return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled) * 0.1;
       }
 
     function updateBumps() {
@@ -81,28 +78,28 @@ document.addEventListener('DOMContentLoaded', function() {
             // Apply the bump offset from the bumps array
             trainCars[i].bumpOffset = bumps[(trainCars.length - i - 1) * 60];
     
-            ctx.fillStyle = '#FF0000'; // Red train car
+            ctx.fillStyle = '#FF0000';
             ctx.fillRect(trainCars[i].x, trainCars[i].y + trainCars[i].bumpOffset, trainWidth, trainHeight);
         }
     }
 
     // Animation loop
     function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        drawBridge(); // Draw the bridge
+        drawBridge();
 
-        trainX += 2; // Move the train
-        if (trainX > canvas.width) { // Reset the train position after crossing
+        trainX += 2;
+        if (trainX > canvas.width) {
             trainX = -trainWidth;
         }
 
-        drawTrainWithCars(); // Draw the moving train
+        drawTrainWithCars();
 
-        requestAnimationFrame(animate); // Continue the loop
+        requestAnimationFrame(animate);
     }
 
-    animate(); // Start the animation
+    animate();
 });
 
 const eventSource = new EventSource('http://localhost:3000/update');
