@@ -1,2 +1,3 @@
 subway_station_ids.csv
 .env
+node_modules/*
