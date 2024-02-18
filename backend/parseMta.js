@@ -1,6 +1,7 @@
 const request = require('request-promise-native');
 const express = require('express');
 const cors = require('cors');
+require('dotenv').config();
 var GtfsRealtimeBindings = require('gtfs-realtime-bindings');
 
 const app = express();
@@ -47,7 +48,7 @@ async function makeRequest(url) {
   let options = {
     method: 'GET',
     url: url,
-    headers: { "x-api-key": 'rjlrrZNJDO38zgP2j1lxAa6FNMFNcWB31nRN4QP1'},
+    headers: { "x-api-key": process.env.MTA_KEY},
     encoding: null
   };
 
