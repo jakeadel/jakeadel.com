@@ -107,5 +107,5 @@ const eventSource = new EventSource('http://localhost:3000/update');
 eventSource.onmessage = function(event) {
     const data = JSON.parse(event.data);
     console.log(data)
-    document.getElementById('updates').innerHTML = `<p>${data}</p>`;
+    document.getElementById('updates').innerHTML = `<p>${JSON.stringify(data)}</p>`;
 };
