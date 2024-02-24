@@ -9,7 +9,7 @@ const app = express();
 app.use(cors());
 const port = 3000;
 
-let trains = new Map()
+let trains = new Map();
 
 app.get('/update', (req, res) => {
   console.log("Received request to update endpoint")
@@ -20,7 +20,7 @@ app.get('/update', (req, res) => {
   req.setTimeout(0);
 
   function sendData() {
-    const trainsArray = Array.from(trains.entries());
+    const trainsArray = Array.from(trains.values());
 
     const data = { trains: trainsArray };
 
@@ -157,5 +157,4 @@ FeedEntity {
     stopId: 'M18S'                                                  -- The last station the train stopped at
   }
 }
-
 */
