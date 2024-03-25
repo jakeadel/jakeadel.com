@@ -106,11 +106,11 @@ document.addEventListener('DOMContentLoaded', function() {
             ctx.fillStyle = '#FFFFFF';
             ctx.font = '16px Arial';
 
-            const textWidth = ctx.measureText(train.routeId).width;
+            const textWidth = ctx.measureText(train.tripId).width;
             const textX = train.location + (trainWidth - textWidth) / 2;
             const textY = bridgeY - trainHeight / 2 + bridgeY / 20 - 5;
 
-            ctx.fillText(train.routeId, textX, textY);
+            ctx.fillText(train.tripId, textX, textY);
         }
     }
 
@@ -126,7 +126,22 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(animate, 1000);
 });
 
-const eventSource = new EventSource('http://localhost:3000/update');
+const eventSource = new WebSocket('ws://localhost:3000');
+
+eventSource.onopen = function(event) {
+    console.log('Connection opened:', event);
+    // You can also send messages to the server if needed
+    // ws.send('Hello, server!');
+  };
+  
+  eventSource.onerror = function(error) {
+    console.log('WebSocket error:', error);
+  };
+  
+  eventSource.onclose = function(event) {
+    console.log('Connection closed:', event);
+  };
+  
 
 eventSource.onmessage = function(event) {
     const data = JSON.parse(event.data);
