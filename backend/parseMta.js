@@ -1,9 +1,8 @@
 const request = require('request-promise-native');
 const WebSocket = require('ws');
-const cors = require('cors');
 const fs = require('fs');
 require('dotenv').config();
-var GtfsRealtimeBindings = require('gtfs-realtime-bindings');
+const GtfsRealtimeBindings = require('gtfs-realtime-bindings');
 
 
 const wss = new WebSocket.Server({ port: 3000 });
@@ -101,7 +100,8 @@ async function makeRequest(url) {
       return;
     }
     // Is the train between Essex and Marcy in either direction
-    if (entity.vehicle.stopId === 'M16N' || entity.vehicle.stopId === 'M18S') {
+    if ((entity.vehicle.stopId === 'M16N' && entity.vehicle.routeId === 'M') || (entity.vehicle.stopId === 'M16S' && entity.vehicle.routeId === 'J')
+        || (entity.vehicle.stopId === 'M18N' && entity.vehicle.routeId === 'J') || (entity.vehicle.stopId === 'M18S' && entity.vehicle.routeId === 'M')) {
       locations.push(new Train(entity, feed.header.timestamp));
     }
   });
@@ -111,6 +111,7 @@ async function makeRequest(url) {
 class Train {
   constructor(FeedEntity, timestamp) {
     this.id = FeedEntity.vehicle.trip.tripId;
+    this.routeId = FeedEntity.vehicle.trip.routeId;
     this.lastMoved = FeedEntity.vehicle.timestamp;
     this.tripId = FeedEntity.vehicle.trip.tripId;
     this.direction = FeedEntity.vehicle.stopId.slice(-1);
