@@ -1,3 +1,4 @@
+const http = require('http');
 const request = require('request-promise-native');
 const WebSocket = require('ws');
 const fs = require('fs');
@@ -5,7 +6,21 @@ require('dotenv').config();
 const GtfsRealtimeBindings = require('gtfs-realtime-bindings');
 
 
-const wss = new WebSocket.Server({ port: 3000 });
+const PORT = 3000;
+
+const server = http.createServer((req, res) => {
+  if (req.url === '/health') {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({status: 'healthy'}))
+  }
+  else {
+    res.statusCode = 404;
+    res.end();
+  }
+})
+
+const wss = new WebSocket.Server({ port: PORT });
 let trains = new Map();
 
 wss.on('connection', function connection(ws) {
@@ -100,8 +115,8 @@ async function makeRequest(url) {
       return;
     }
     // Is the train between Essex and Marcy in either direction
-    if ((entity.vehicle.stopId === 'M16N' && entity.vehicle.routeId === 'M') || (entity.vehicle.stopId === 'M16S' && entity.vehicle.routeId === 'J')
-        || (entity.vehicle.stopId === 'M18N' && entity.vehicle.routeId === 'J') || (entity.vehicle.stopId === 'M18S' && entity.vehicle.routeId === 'M')) {
+    if ((entity.vehicle.stopId === 'M16N' && entity.vehicle.trip.routeId === 'M') || (entity.vehicle.stopId === 'M16S' && entity.vehicle.trip.routeId === 'J')
+        || (entity.vehicle.stopId === 'M18N' && entity.vehicle.trip.routeId === 'J') || (entity.vehicle.stopId === 'M18S' && entity.vehicle.trip.routeId === 'M')) {
       locations.push(new Train(entity, feed.header.timestamp));
     }
   });
