@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(animate, 1000);
 });
 
-const eventSource = new WebSocket('ws://18.217.242.238:3000');
+const eventSource = new WebSocket('ws://Williamsburg-Server-Balancer-463971964.us-east-2.elb.amazonaws.com');
 
 eventSource.onopen = function(event) {
     console.log('Connection opened:', event);
