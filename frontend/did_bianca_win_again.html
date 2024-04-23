@@ -39,6 +39,7 @@ async function populateTable() {
 
   try {
     const data = await fetchData();
+    console.log({data})
 
     data.forEach(row => {
       const tr = document.createElement('tr');
