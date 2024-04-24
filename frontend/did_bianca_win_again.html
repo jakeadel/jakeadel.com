@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="game-tracker.css">
+<title>Google Sheets Data</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Jersey+25&display=swap" rel="stylesheet">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Arvo:ital,wght@0,400;0,700;1,400;1,700&family=Jersey+25&display=swap" rel="stylesheet">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Arvo:ital,wght@0,400;0,700;1,400;1,700&family=Jersey+25&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+<div id="overall-score-wrapper" class="overall-score-wrapper">
+  <h2 class="overall-score-header">Leader Across All Games<h2>
+  <h1 class="overall-score-leader"></h1>
+  <div class="player-scores">
+    <h3 class="score-header">All-Time Score</h3>
+    <div class= "info-wrapper">
+      <div class="info-box">
+        <h2 class="leader-name"></h2>
+        <div class="overall-count-wrapper">
+          <h2 class="leader-count"></h2>
+        </div>
+      </div>
+      <div class="info-box">
+        <h2 class="loser-name"></h2>
+        <div class="overall-count-wrapper">
+          <h2 class="loser-count"></h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div id="scoreboard"></div>
+
+<table id="data-table">
+  <tr>
+    <thead>
+      <th>Timestamp</th>
+      <th>Game</th>
+      <th>Winner</th>
+      <th>Thoughts</th>
+    </thead>
+    <tbody>
+    </tbody>
+  </tr>
+</table>
+
+<div class="game-tally-template">
+  <div class="game-name-wrapper">
+    <img class="game-image"></img>
+    <h1 class="game-name"></h1>
+  </div>
+  <div class="leader-wrapper">
+    <h3 class="leader-header"></h3>
+    <h1 class="current-leader"></h1>
+  </div>
+  <div class="player-scores">
+    <h3 class="score-header">All-Time Score</h3>
+    <div class= "info-wrapper">
+      <div class="info leader-info">
+        <h2 class="leader-name"></h2>
+        <div class="count-wrapper">
+          <h2 class="leader-count"></h2>
+        </div>
+      </div>
+      <div class="info loser-info">
+        <h2 class="loser-name"></h2>
+        <div class="count-wrapper">
+          <h2 class="loser-count"></h2>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+async function fetchData() {
+  try {
+    const response = await fetch('https://abjskrjf0k.execute-api.us-east-2.amazonaws.com/grabSheetsData');
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return [];
+  }
+}
+
+async function populateTable(data) {
+  const dataTable = document.getElementById('data-table');
+  const tbody = dataTable.querySelector('tbody');
+  tbody.innerHTML = '';
+
+  try {
+
+    data.forEach(row => {
+      const tr = document.createElement('tr');
+      row.forEach(cell => {
+        const td = document.createElement('td');
+        td.textContent = cell;
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+  } catch (error) {
+    console.error('Error populating table:', error);
+  }
+}
+
+function calcWinCounts(data) {
+  let winCounts = {}; // game: player: wins
+
+  for (const row of data) {
+    const game = row[1];
+    const winner = row[2];
+    if (game in winCounts) {
+      if (winner in winCounts[game]) {
+        winCounts[game][winner]++;
+      }
+      else {
+        winCounts[game][winner] = 1;
+      }
+    }
+    else {
+      winCounts[game] = {[winner]: 1};
+    }
+  }
+  return winCounts;
+}
+
+async function populateScoreboard(winCounts) {
+  const gameTallyTemplate = document.querySelector('.game-tally-template');
+  const scoreboardContainer = document.getElementById('scoreboard');
+
+  const overall_scores = {}
+
+  for (const [game, counts] of Object.entries(winCounts)) {
+    // Clone the template
+    const gameTallyClone = gameTallyTemplate.cloneNode(true);
+    gameTallyClone.classList.add('game-tally');
+    gameTallyClone.classList.remove('game-tally-template');
+
+    // Populate the cloned template with data
+    const gameNameElement = gameTallyClone.querySelector('.game-name');
+    const gameImageElement = gameTallyClone.querySelector('.game-image');
+    const leaderNameElement = gameTallyClone.querySelector('.leader-name');
+    const leaderCountElement = gameTallyClone.querySelector('.leader-count');
+    const loserNameElement = gameTallyClone.querySelector('.loser-name');
+    const loserCountElement = gameTallyClone.querySelector('.loser-count');
+    const leaderHeaderElement = gameTallyClone.querySelector('.leader-header');
+    const currentLeaderElement = gameTallyClone.querySelector('.current-leader');
+    const leaderWrapperElement = gameTallyClone.querySelector('.leader-wrapper');
+
+    gameNameElement.textContent = game;
+    // Assuming counts is an object with keys as player names and values as win counts
+    const players = Object.keys(counts);
+    console.log({players})
+    console.log({counts})
+    let leader, loser, leaderHeader;
+
+    if (players.length === 1) {
+      leader = players[0];
+      leaderHeader = players[0];
+      loser = "null";
+    }
+    else if (players.length === 2){
+      const firstPlayer = players[0];
+      const secondPlayer = players[1];
+      const firstPlayerCount = counts[firstPlayer];
+      const secondPlayerCount = counts[secondPlayer];
+
+      if (firstPlayer in overall_scores) {
+        overall_scores[firstPlayer] += firstPlayerCount;
+      }
+      else {
+        overall_scores[firstPlayer] = firstPlayerCount;
+      }
+
+      if (secondPlayer in overall_scores) {
+        overall_scores[secondPlayer] += secondPlayerCount;
+      }
+      else {
+        overall_scores[secondPlayer] = secondPlayerCount;
+      }
+
+      if (firstPlayerCount > secondPlayerCount) {
+        leader = firstPlayer;
+        leaderHeader = firstPlayer;
+        loser = secondPlayer;
+      }
+      else if (secondPlayerCount > firstPlayerCount) {
+        leader = secondPlayer;
+        leaderHeader = secondPlayer;
+        loser = firstPlayer;
+      }
+      else {
+        leader = firstPlayer;
+        leaderHeader = "Tie"
+        loser = secondPlayer;
+      }
+    }
+
+    console.log({leader}, {loser})
+
+    leaderNameElement.textContent = leader;
+    leaderCountElement.textContent = counts[leader];
+    loserNameElement.textContent = loser;
+    loserCountElement.textContent = counts[loser];
+    leaderHeaderElement.textContent = "Leader";
+    currentLeaderElement.textContent = leaderHeader;
+
+    if (leader === 'Bianca') {
+      leaderWrapperElement.style.backgroundColor = "pink";
+    }
+    else if (leader === 'Jake') {
+      leaderWrapperElement.style.backgroundColor = "orange";
+    }
+
+    if (game === "Mini Crossword") {
+      gameImageElement.src = './images/mini-crossword-logo.jpeg';
+    }
+    else if (game === "Words With Friends") {
+      gameImageElement.src= './images/words-with-friends-logo.jpeg';
+    }
+    else if (game === "Scrabble") {
+      gameImageElement.src = './images/scrabble-logo.png'
+    }
+    else if (game === "Slap") {
+      gameImageElement.src = './images/slap-logo.jpeg'
+    }
+    else if (game === "Mario Kart") {
+      gameImageElement.src = './images/mario-kart-logo.png'
+    }
+
+    // Append the populated clone to the container
+    scoreboardContainer.appendChild(gameTallyClone);
+  }
+  console.log(overall_scores)
+  populateOverall(overall_scores);
+}
+
+
+function populateOverall(overall_scores) {
+  const names = Object.keys(overall_scores);
+  console.log({names})
+
+  let leader, leaderScore, loser, loserScore
+  if (overall_scores[names[0]] > overall_scores[names[1]]) {
+    leader = names[0];
+    leaderScore = overall_scores[names[0]];
+    loser = names[1];
+    loserScore = overall_scores[names[1]];
+  }
+  else {
+    leader = names[1];
+    leaderScore = overall_scores[names[1]];
+    loser = names[0];
+    loserScore = overall_scores[names[0]];
+  }
+  console.log({leader}, {leaderScore}, {loser}, {loserScore})
+  const overallScoreContainer = document.getElementById('overall-score-wrapper');
+
+  const leaderNameElement = overallScoreContainer.querySelector('.leader-name');
+  const loserNameElement = overallScoreContainer.querySelector('.loser-name');
+  const leaderScoreElement = overallScoreContainer.querySelector('.leader-count');
+  const loserScoreElement = overallScoreContainer.querySelector('.loser-count');
+  const leaderNameHeaderElement = overallScoreContainer.querySelector('.overall-score-leader');
+
+  leaderNameElement.textContent = leader;
+  loserNameElement.textContent = loser;
+  leaderScoreElement.textContent = leaderScore;
+  loserScoreElement.textContent = loserScore;
+  leaderNameHeaderElement.textContent = leader;
+
+  if (leader === "Bianca") {
+    overallScoreContainer.style.backgroundColor = "Pink";
+  }
+  else if (leader === "Jake") {
+    overallScoreContainer.style.backgroundColor = "Orange"
+  }
+}
+
+async function presentData() {
+  const data = await fetchData();
+  await populateTable(data);
+  const winCounts = calcWinCounts(data);
+  populateScoreboard(winCounts);
+}
+
+presentData();
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,171 @@
+h1, h2, h3, h4, h5, h6 {
+  display: grid;
+  place-items: center;
+}
+
+body {
+	
+}
+
+#data-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 250px;
+}
+
+#data-table th, #data-table td {
+  border: 1px solid #ccc;
+  padding: 8px; 
+  text-align: left;
+}
+
+.game-tally-template {
+	display: none;
+}
+
+#scoreboard {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	margin-left: 5%;
+	margin-right: 5%;
+	font-family: "Roboto", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+#overall-score-wrapper {
+	margin-right: 5%;
+	margin-left: 5%;
+	margin-bottom: 50px;
+}
+
+.info-box {
+	width: 50%;
+}
+
+.info-wrapper {
+    width: 40%;
+    min-width: 300px;
+}
+
+.player-scores {
+	display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.count-wrapper {
+	width: 60%;
+    align-content: center;
+    margin-left: 20%;
+    margin-right: 20%;
+    margin-bottom: 10px;
+    border: solid;
+    border-radius: 5px;
+    aspect-ratio: 1 / 1;
+    font-family: "Jersey 25", sans-serif;
+  	font-weight: 400;
+  	font-style: normal;
+    font-size: 6vw;
+}
+
+.count-wrapper h2 {
+	margin: 0;
+}
+
+.overall-count-wrapper {
+	width: 90%;
+    align-content: center;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-bottom: 10px;
+    border: solid;
+    border-radius: 5px;
+    aspect-ratio: 1 / 1;
+    font-family: "Jersey 25", sans-serif;
+  	font-weight: 400;
+  	font-style: normal;
+    font-size: 10vw;
+}
+
+.overall-count-wrapper h2 {
+	margin: 0;
+}
+
+.game-tally {
+  width: 30%;
+  max-width: 600px;
+}
+
+/* Small (SM) - Up to 900px */
+@media screen and (max-width: 1160px) {
+  .game-tally {
+    width: 45%;
+  }
+}
+
+/* Medium (MD) - Up to 1200px */
+@media screen and (max-width: 778px) {
+  .game-tally {
+    width: 100%;
+  }
+}
+
+.player-scores {
+	display: flex;
+	flex-direction: column;
+}
+
+.score-header {
+	margin: 0;
+	margin-top: 10px;
+}
+
+.info-wrapper {
+	display: flex;
+}
+
+.info {
+	width: 50%;
+}
+
+.game-tally {
+	border: solid;
+	border-color: black;
+	border-radius: 5px;
+	min-width: 320px;
+	margin: 10px;
+}
+
+.leader-wrapper {
+	display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.leader-wrapper h1,
+.leader-wrapper h3 {
+	margin: 10px;
+}
+
+.leader-header {
+	margin: 0;
+    margin-top: 5px;
+}
+
+.game-name-wrapper {
+	background-size: contain;
+}
+
+.game-image {
+	aspect-ratio: 16 / 9;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-bottom: solid 1px black;
+}

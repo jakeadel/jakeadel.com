@@ -16,12 +16,17 @@ const server = http.createServer((req, res) => {
     res.end(JSON.stringify({status: 'healthy'}))
   }
   else {
+    console.log("Nonexistent path requested:", req.url);
     res.statusCode = 404;
     res.end();
   }
 })
 
-const wss = new WebSocket.Server({ port: PORT });
+server.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+const wss = new WebSocket.Server({ server });
 let trains = new Map();
 
 wss.on('connection', function connection(ws) {
