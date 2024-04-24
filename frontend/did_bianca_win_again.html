@@ -26,12 +26,14 @@
 <body>
 
 <div id="overall-score-wrapper" class="overall-score-wrapper">
-  <h2 class="overall-score-header">Leader Across All Games<h2>
-  <h1 class="overall-score-leader"></h1>
+  <h2 class="overall-score-header">Leader Across All Games</h2>
+  <div class="overall-score-leader-wrapper">
+    <h1 class="overall-score-leader"></h1>
+  </div>
   <div class="player-scores">
     <h3 class="score-header">All-Time Score</h3>
-    <div class= "info-wrapper">
-      <div class="info-box">
+    <div class= "header-info-wrapper">
+      <div class="header-info-box">
         <h2 class="leader-name"></h2>
         <div class="overall-count-wrapper">
           <h2 class="leader-count"></h2>
@@ -227,11 +229,14 @@ async function populateScoreboard(winCounts) {
     leaderHeaderElement.textContent = "Leader";
     currentLeaderElement.textContent = leaderHeader;
 
-    if (leader === 'Bianca') {
+    if (leaderHeader === 'Bianca') {
       leaderWrapperElement.style.backgroundColor = "pink";
     }
-    else if (leader === 'Jake') {
+    else if (leaderHeader === 'Jake') {
       leaderWrapperElement.style.backgroundColor = "orange";
+    }
+    else if (leaderHeader === "Tie") {
+      leaderWrapperElement.style.backgroundColor = "gray";
     }
 
     if (game === "Mini Crossword") {
