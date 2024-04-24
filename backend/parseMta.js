@@ -116,21 +116,35 @@ async function makeRequest(url) {
       return;
     }
     // Is the train between Essex and Marcy in either direction
-    if ((entity.vehicle.stopId === 'M16N' && entity.vehicle.trip.routeId === 'M') || (entity.vehicle.stopId === 'M16S' && entity.vehicle.trip.routeId === 'J')
-        || (entity.vehicle.stopId === 'M18N' && entity.vehicle.trip.routeId === 'J') || (entity.vehicle.stopId === 'M18S' && entity.vehicle.trip.routeId === 'M')) {
-      locations.push(new Train(entity, feed.header.timestamp));
+    const destination = calcDestinationStation(entity);
+    if (destination) {
+      locations.push(new Train(entity, feed.header.timestamp, destination));
     }
   });
   return locations;
 }
 
+function calcDestinationStation(entity) {
+  const stopId = entity.vehicle.stopId;
+  const routeId = entity.vehicle.trip.routeId;
+  if (stopId === "M16N" && routeId === "M" || stopId === "M16S" && routeId === "J") {
+    return "Essex";
+  }
+  else if (stopId === "M18S" && routeId === "M" || stopId === "M18N" && routeId === "J") {
+    return "Marcy";
+  } 
+  else {
+    return false
+  }
+}
+
 class Train {
-  constructor(FeedEntity, timestamp) {
+  constructor(FeedEntity, timestamp, destination) {
     this.id = FeedEntity.vehicle.trip.tripId;
     this.routeId = FeedEntity.vehicle.trip.routeId;
     this.lastMoved = FeedEntity.vehicle.timestamp;
     this.tripId = FeedEntity.vehicle.trip.tripId;
-    this.direction = FeedEntity.vehicle.stopId.slice(-1);
+    this.destination = destination;
     this.timeOfRequest = timestamp;
     this.isMoving = this.isMoving();
     this.location = 0;

@@ -80,16 +80,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         for (const train of trains.values()) {
             if (train.isNew) {
-                if (train.direction === "S") {
+                if (train.destination === "Essex") {
                     train.location = width - train.location;
-                }
-                else {
-                    train.location = train.location;
                 }
                 train.isNew = false;
             }
             else {
-                if (train.direction === "S") {
+                if (train.destination === "Essex") {
                     train.location -= 1;
                 }
                 else {
