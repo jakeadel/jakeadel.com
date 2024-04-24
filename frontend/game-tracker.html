@@ -182,12 +182,15 @@ async function populateScoreboard(winCounts) {
       leader = players[0];
       leaderHeader = players[0];
       loser = "null";
+      overall_scores[leader] = counts[leader];
+      overall_scores["null"] = "";
     }
     else if (players.length === 2){
       const firstPlayer = players[0];
       const secondPlayer = players[1];
       const firstPlayerCount = counts[firstPlayer];
       const secondPlayerCount = counts[secondPlayer];
+      console.log(firstPlayer, firstPlayerCount)
 
       if (firstPlayer in overall_scores) {
         overall_scores[firstPlayer] += firstPlayerCount;
@@ -267,18 +270,27 @@ function populateOverall(overall_scores) {
   const names = Object.keys(overall_scores);
   console.log({names})
 
-  let leader, leaderScore, loser, loserScore
+  let leader, leaderScore, loser, loserScore, leaderHeader;
   if (overall_scores[names[0]] > overall_scores[names[1]]) {
     leader = names[0];
     leaderScore = overall_scores[names[0]];
     loser = names[1];
     loserScore = overall_scores[names[1]];
+    leaderHeader = names[0];
+  }
+  else if (overall_scores[names[0]] < overall_scores[names[1]]){
+    leader = names[1];
+    leaderScore = overall_scores[names[1]];
+    loser = names[0];
+    loserScore = overall_scores[names[0]];
+    leaderHeader = names[1];
   }
   else {
     leader = names[1];
     leaderScore = overall_scores[names[1]];
     loser = names[0];
     loserScore = overall_scores[names[0]];
+    leaderHeader = "Tie";
   }
   console.log({leader}, {leaderScore}, {loser}, {loserScore})
   const overallScoreContainer = document.getElementById('overall-score-wrapper');
@@ -293,13 +305,16 @@ function populateOverall(overall_scores) {
   loserNameElement.textContent = loser;
   leaderScoreElement.textContent = leaderScore;
   loserScoreElement.textContent = loserScore;
-  leaderNameHeaderElement.textContent = leader;
+  leaderNameHeaderElement.textContent = leaderHeader;
 
-  if (leader === "Bianca") {
+  if (leaderHeader === "Bianca") {
     overallScoreContainer.style.backgroundColor = "Pink";
   }
-  else if (leader === "Jake") {
-    overallScoreContainer.style.backgroundColor = "Orange"
+  else if (leaderHeader === "Jake") {
+    overallScoreContainer.style.backgroundColor = "Orange";
+  }
+  else if (leaderHeader === "Tie") {
+    overallScoreContainer.style.backgroundColor = "Gray";
   }
 }
 
