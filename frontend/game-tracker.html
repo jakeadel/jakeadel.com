@@ -26,14 +26,12 @@
 <body>
 
 <div id="overall-score-wrapper" class="overall-score-wrapper">
-  <h2 class="overall-score-header">Leader Across All Games</h2>
-  <div class="overall-score-leader-wrapper">
-    <h1 class="overall-score-leader"></h1>
-  </div>
+  <h2 class="overall-score-header">Leader Across All Games<h2>
+  <h1 class="overall-score-leader"></h1>
   <div class="player-scores">
     <h3 class="score-header">All-Time Score</h3>
-    <div class= "header-info-wrapper">
-      <div class="header-info-box">
+    <div class= "info-wrapper">
+      <div class="info-box">
         <h2 class="leader-name"></h2>
         <div class="overall-count-wrapper">
           <h2 class="leader-count"></h2>
@@ -47,8 +45,8 @@
       </div>
     </div>
   </div>
-</div>
 
+</div>
 <div id="scoreboard"></div>
 
 <table id="data-table">
@@ -66,7 +64,7 @@
 
 <div class="game-tally-template">
   <div class="game-name-wrapper">
-    <img class="game-image" alt="Game Image"></img>
+    <img class="game-image"></img>
     <h1 class="game-name"></h1>
   </div>
   <div class="leader-wrapper">
@@ -174,23 +172,24 @@ async function populateScoreboard(winCounts) {
     gameNameElement.textContent = game;
     // Assuming counts is an object with keys as player names and values as win counts
     const players = Object.keys(counts);
-    console.log({players})
-    console.log({counts})
     let leader, loser, leaderHeader;
-
+    console.log({players})
     if (players.length === 1) {
       leader = players[0];
       leaderHeader = players[0];
       loser = "null";
-      overall_scores[leader] = counts[leader];
-      overall_scores["null"] = "";
+      if (leader in overall_scores) {
+        overall_scores[leader] += counts[leader];
+      }
+      else {
+        overall_scores[leader] = counts[leader];
+      }
     }
     else if (players.length === 2){
       const firstPlayer = players[0];
       const secondPlayer = players[1];
       const firstPlayerCount = counts[firstPlayer];
       const secondPlayerCount = counts[secondPlayer];
-      console.log(firstPlayer, firstPlayerCount)
 
       if (firstPlayer in overall_scores) {
         overall_scores[firstPlayer] += firstPlayerCount;
@@ -223,8 +222,6 @@ async function populateScoreboard(winCounts) {
       }
     }
 
-    console.log({leader}, {loser})
-
     leaderNameElement.textContent = leader;
     leaderCountElement.textContent = counts[leader];
     loserNameElement.textContent = loser;
@@ -232,14 +229,11 @@ async function populateScoreboard(winCounts) {
     leaderHeaderElement.textContent = "Leader";
     currentLeaderElement.textContent = leaderHeader;
 
-    if (leaderHeader === 'Bianca') {
+    if (leader === 'Bianca') {
       leaderWrapperElement.style.backgroundColor = "pink";
     }
-    else if (leaderHeader === 'Jake') {
+    else if (leader === 'Jake') {
       leaderWrapperElement.style.backgroundColor = "orange";
-    }
-    else if (leaderHeader === "Tie") {
-      leaderWrapperElement.style.backgroundColor = "gray";
     }
 
     if (game === "Mini Crossword") {
@@ -261,36 +255,26 @@ async function populateScoreboard(winCounts) {
     // Append the populated clone to the container
     scoreboardContainer.appendChild(gameTallyClone);
   }
-  console.log(overall_scores)
+  console.log({overall_scores})
   populateOverall(overall_scores);
 }
 
 
 function populateOverall(overall_scores) {
   const names = Object.keys(overall_scores);
-  console.log({names})
 
-  let leader, leaderScore, loser, loserScore, leaderHeader;
+  let leader, leaderScore, loser, loserScore
   if (overall_scores[names[0]] > overall_scores[names[1]]) {
     leader = names[0];
     leaderScore = overall_scores[names[0]];
     loser = names[1];
     loserScore = overall_scores[names[1]];
-    leaderHeader = names[0];
-  }
-  else if (overall_scores[names[0]] < overall_scores[names[1]]){
-    leader = names[1];
-    leaderScore = overall_scores[names[1]];
-    loser = names[0];
-    loserScore = overall_scores[names[0]];
-    leaderHeader = names[1];
   }
   else {
     leader = names[1];
     leaderScore = overall_scores[names[1]];
     loser = names[0];
     loserScore = overall_scores[names[0]];
-    leaderHeader = "Tie";
   }
   console.log({leader}, {leaderScore}, {loser}, {loserScore})
   const overallScoreContainer = document.getElementById('overall-score-wrapper');
@@ -305,16 +289,13 @@ function populateOverall(overall_scores) {
   loserNameElement.textContent = loser;
   leaderScoreElement.textContent = leaderScore;
   loserScoreElement.textContent = loserScore;
-  leaderNameHeaderElement.textContent = leaderHeader;
+  leaderNameHeaderElement.textContent = leader;
 
-  if (leaderHeader === "Bianca") {
+  if (leader === "Bianca") {
     overallScoreContainer.style.backgroundColor = "Pink";
   }
-  else if (leaderHeader === "Jake") {
-    overallScoreContainer.style.backgroundColor = "Orange";
-  }
-  else if (leaderHeader === "Tie") {
-    overallScoreContainer.style.backgroundColor = "Gray";
+  else if (leader === "Jake") {
+    overallScoreContainer.style.backgroundColor = "Orange"
   }
 }
 
@@ -330,4 +311,3 @@ presentData();
 
 </body>
 </html>
-
