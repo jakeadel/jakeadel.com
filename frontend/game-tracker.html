@@ -266,19 +266,29 @@ async function populateScoreboard(winCounts) {
 function populateOverall(overall_scores) {
   const names = Object.keys(overall_scores);
 
-  let leader, leaderScore, loser, loserScore
+  let leader, leaderScore, loser, loserScore, leaderHeader
   if (overall_scores[names[0]] > overall_scores[names[1]]) {
     leader = names[0];
+    leaderHeader = names[0];
     leaderScore = overall_scores[names[0]];
     loser = names[1];
     loserScore = overall_scores[names[1]];
   }
-  else {
+  else if (overall_scores[names[0]] < overall_scores[names[1]]){
     leader = names[1];
+    leaderHeader = names[1];
     leaderScore = overall_scores[names[1]];
     loser = names[0];
     loserScore = overall_scores[names[0]];
   }
+  else {
+    leader = names[1];
+    leaderHeader = 'Tie';
+    leaderScore = overall_scores[names[1]];
+    loser = names[0];
+    loserScore = overall_scores[names[0]];
+  }
+
   console.log({leader}, {leaderScore}, {loser}, {loserScore})
   const overallScoreContainer = document.getElementById('overall-score-wrapper');
 
@@ -292,13 +302,16 @@ function populateOverall(overall_scores) {
   loserNameElement.textContent = loser;
   leaderScoreElement.textContent = leaderScore;
   loserScoreElement.textContent = loserScore;
-  leaderNameHeaderElement.textContent = leader;
+  leaderNameHeaderElement.textContent = leaderHeader;
 
-  if (leader === "Bianca") {
+  if (leaderHeader === "Bianca") {
     overallScoreContainer.style.backgroundColor = "Pink";
   }
-  else if (leader === "Jake") {
-    overallScoreContainer.style.backgroundColor = "Orange"
+  else if (leaderHeader === "Jake") {
+    overallScoreContainer.style.backgroundColor = "Orange";
+  }
+  else if (leaderHeader === "Tie") {
+    overallScoreContainer.style.backgroundColor = "Tie";
   }
 }
 
