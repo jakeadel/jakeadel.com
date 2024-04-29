@@ -124,6 +124,11 @@ body {
   }
 }
 
+:root {
+	--overall-count-font-size: 10vw;
+	--count-font-size: 6vw;
+}
+
 .player-scores {
 	display: flex;
 	flex-direction: column;
