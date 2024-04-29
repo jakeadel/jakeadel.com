@@ -229,11 +229,14 @@ async function populateScoreboard(winCounts) {
     leaderHeaderElement.textContent = "Leader";
     currentLeaderElement.textContent = leaderHeader;
 
-    if (leader === 'Bianca') {
+    if (leaderHeader === 'Bianca') {
       leaderWrapperElement.style.backgroundColor = "pink";
     }
-    else if (leader === 'Jake') {
+    else if (leaderHeader === 'Jake') {
       leaderWrapperElement.style.backgroundColor = "orange";
+    }
+    else if (leaderHeader === 'Tie') {
+      leaderWrapperElement.style.backgroundColor = "gray";
     }
 
     if (game === "Mini Crossword") {
