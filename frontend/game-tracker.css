@@ -102,22 +102,20 @@ body {
   max-width: 600px;
 }
 
-/* Small (SM) - Up to 900px */
 @media screen and (max-width: 1160px) {
 	:root {
-		--overall-count-font-size: 20vw;
-		--count-font-size: 12vw;
+		--overall-count-font-size: 10vw;
+		--count-font-size: 6vw;
 	}
   .game-tally {
     width: 45%;
   }
 }
 
-/* Medium (MD) - Up to 1200px */
 @media screen and (max-width: 778px) {
 	:root {
-		--overall-count-font-size: 10vw;
-		--count-font-size: 6vw;
+		--overall-count-font-size: 20vw;
+		--count-font-size: 12vw;
 	}
   .game-tally {
     width: 100%;
