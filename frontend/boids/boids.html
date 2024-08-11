@@ -63,17 +63,17 @@
                 env: {
                     logString: (msgPtr) => {
                         const msg = getStringFromMemory(msgPtr, instance);
-                        console.log(msg);
+                        //console.log(msg);
                     },
                     logInt: (num) => {
-                        console.log(num);
+                        //console.log(num);
                     },
                     logFloat: (num) => {
-                        console.log(num);
+                        //console.log(num);
                     },
                     logArr: (arrPtr) => {
                         const arr = new Float64Array(instance.exports.memory.buffer, arrPtr, 2);
-                        console.log("Vector:", `[${arr[0]}, ${arr[1]}]`);
+                        //console.log("Vector:", `[${arr[0]}, ${arr[1]}]`);
                     }
                 }
             });
