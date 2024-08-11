@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boids Simulation</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+            float: left;
+        }
+        #infoPanel {
+            float: left;
+            margin-left: 20px;
+        }
+        .boid-info {
+            margin-bottom: 10px;
+        }
+        table {
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 5px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="boidsCanvas" width="800" height="800"></canvas>
+    <div id="infoPanel"></div>
+    <script>
+        const canvas = document.getElementById('boidsCanvas');
+        const ctx = canvas.getContext('2d');
+        const infoPanel = document.getElementById('infoPanel');
+        const boidColors = [];
+        const boidStats = [];
+
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        function getStringFromMemory(ptr, wasm) {
+            const memory = new Uint8Array(wasm.exports.memory.buffer);
+            let str = "";
+            for (let i = ptr; memory[i] !== 0; i++) {
+                str += String.fromCharCode(memory[i]);
+            }
+            return str;
+        }
+
+        async function loadWasm() {
+            const response = await fetch('./boid.wasm'); // Replace with the correct path to your WASM file
+            const buffer = await response.arrayBuffer();
+            const { instance } = await WebAssembly.instantiate(buffer, {
+                env: {
+                    logString: (msgPtr) => {
+                        const msg = getStringFromMemory(msgPtr, instance);
+                        console.log(msg);
+                    },
+                    logInt: (num) => {
+                        console.log(num);
+                    },
+                    logFloat: (num) => {
+                        console.log(num);
+                    },
+                    logArr: (arrPtr) => {
+                        const arr = new Float64Array(instance.exports.memory.buffer, arrPtr, 2);
+                        console.log("Vector:", `[${arr[0]}, ${arr[1]}]`);
+                    }
+                }
+            });
+            return instance;
+        }
+
+        function drawBoids(boids, centerOfMass) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            boids.forEach((boid, index) => {
+                const angle = Math.atan2(boid.velocity[1], boid.velocity[0]);
+
+                // Draw the boid as an arrow
+                ctx.save();
+                ctx.translate(boid.position[0], boid.position[1]);
+                ctx.rotate(angle);
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(-15, -5);
+                ctx.lineTo(-10, 0);
+                ctx.lineTo(-15, 5);
+                ctx.closePath();
+                ctx.fillStyle = boidColors[index];
+                ctx.fill();
+                ctx.restore();
+            });
+            // Draw the center of mass as a red dot
+            ctx.beginPath();
+            ctx.arc(centerOfMass[0], centerOfMass[1], 5, 0, 2 * Math.PI);
+            ctx.fillStyle = 'red';
+            ctx.fill();
+        }
+
+        function getCenterOfMass(wasm) {
+            const centerOfMassPtr = wasm.exports.getCenterOfMass();
+            let centerOfMass = new Float64Array(wasm.exports.memory.buffer, centerOfMassPtr, 2);
+            return centerOfMass;
+        }
+
+        function updateInfoPanel(boids, centerOfMass) {
+            infoPanel.innerHTML = '';
+            const generalInfo = document.createElement('div');
+            generalInfo.innerHTML = `
+                <br>Center of Mass: (${centerOfMass[0].toFixed(2)}, ${centerOfMass[1].toFixed(2)})</br>
+            `;
+            infoPanel.appendChild(generalInfo);
+
+            boids.forEach((boid, index) => {
+                const boidInfo = document.createElement('div');
+                boidInfo.classList.add('boid-info');
+                boidInfo.style.color = boidColors[index];
+               
+                if (!boidStats[index]) {
+                    boidStats[index] = {
+                        position: [0, 0],
+                        velocity: [0, 0],
+                        displacement: [0, 0],
+                        difference: [0, 0],
+                        veloDiff: [0, 0],
+                        count: 0
+                    };
+                }
+
+                boidStats[index].position[0] += boid.position[0];
+                boidStats[index].position[1] += boid.position[1];
+                boidStats[index].velocity[0] += boid.velocity[0];
+                boidStats[index].velocity[1] += boid.velocity[1];
+                boidStats[index].displacement[0] += boid.displacement[0];
+                boidStats[index].displacement[1] += boid.displacement[1];
+                boidStats[index].difference[0] += boid.difference[0];
+                boidStats[index].difference[1] += boid.difference[1];
+                boidStats[index].veloDiff[0] += boid.veloDiff[0];
+                boidStats[index].veloDiff[1] += boid.veloDiff[1];
+                boidStats[index].count++;
+
+                const avgPosition = [boidStats[index].position[0] / boidStats[index].count, boidStats[index].position[1] / boidStats[index].count];
+                const avgVelocity = [boidStats[index].velocity[0] / boidStats[index].count, boidStats[index].velocity[1] / boidStats[index].count];
+                const avgDisplacement = [boidStats[index].displacement[0] / boidStats[index].count, boidStats[index].displacement[1] / boidStats[index].count];
+                const avgDifference = [boidStats[index].difference[0] / boidStats[index].count, boidStats[index].difference[1] / boidStats[index].count];
+                const avgVeloDiff = [boidStats[index].veloDiff[0] / boidStats[index].count, boidStats[index].veloDiff[1] / boidStats[index].count];
+
+                boidInfo.innerHTML = `
+                    <table>
+                        <tr><th>Boid ${index}</th><th>Current</th><th>Average</th></tr>
+                        <tr><td>Position</td><td>(${boid.position[0].toFixed(2)}, ${boid.position[1].toFixed(2)})</td><td>(${avgPosition[0].toFixed(2)}, ${avgPosition[1].toFixed(2)})</td></tr>
+                        <tr><td>Velocity</td><td>(${boid.velocity[0].toFixed(2)}, ${boid.velocity[1].toFixed(2)})</td><td>(${avgVelocity[0].toFixed(2)}, ${avgVelocity[1].toFixed(2)})</td></tr>
+                        <tr><td>Displacement</td><td>(${boid.displacement[0].toFixed(2)}, ${boid.displacement[1].toFixed(2)})</td><td>(${avgDisplacement[0].toFixed(2)}, ${avgDisplacement[1].toFixed(2)})</td></tr>
+                        <tr><td>Difference</td><td>(${boid.difference[0].toFixed(2)}, ${boid.difference[1].toFixed(2)})</td><td>(${avgDifference[0].toFixed(2)}, ${avgDifference[1].toFixed(2)})</td></tr>
+                        <tr><td>VeloDiff</td><td>(${boid.veloDiff[0].toFixed(2)}, ${boid.veloDiff[1].toFixed(2)})</td><td>(${avgVeloDiff[0].toFixed(2)}, ${avgVeloDiff[1].toFixed(2)})</td></tr>
+                    </table>
+                `;
+                infoPanel.appendChild(boidInfo);
+            });
+        }
+
+        function sleep(time) {
+            return new Promise((resolve) => setTimeout(resolve, time));
+        }
+
+        async function main() {
+            const wasm = await loadWasm();
+
+            const numBoids = wasm.exports.getNumBoids();
+            const boids = [];
+            for (let i = 0; i < numBoids; i++) {
+                boidColors.push(getRandomColor());
+                const positionPtr = wasm.exports.getBoidPosition(i);
+                const velocityPtr = wasm.exports.getBoidVelocity(i);
+                const displacementPtr = wasm.exports.getBoidDisplacement(i);
+                const differencePtr = wasm.exports.getBoidDifference(i);
+                const veloDiffPtr = wasm.exports.getBoidVeloDiff(i);
+                const namePtr = wasm.exports.getBoidName(i);
+
+                const position = new Float64Array(wasm.exports.memory.buffer, positionPtr, 2);
+                const velocity = new Float64Array(wasm.exports.memory.buffer, velocityPtr, 2);
+                const displacement = new Float64Array(wasm.exports.memory.buffer, displacementPtr, 2);
+                const difference = new Float64Array(wasm.exports.memory.buffer, differencePtr, 2);
+                const veloDiff = new Float64Array(wasm.exports.memory.buffer, veloDiffPtr, 2);
+                const name = new Uint8Array(wasm.exports.memory.buffer, namePtr);
+
+                boids.push({ position, velocity, displacement, difference, veloDiff, name });
+            }
+
+            async function updateAndDraw() {
+                await sleep(10);
+                wasm.exports.moveBoids(800, 800);
+                const centerOfMass = getCenterOfMass(wasm);
+                drawBoids(boids, centerOfMass);
+                updateInfoPanel(boids, centerOfMass);
+                requestAnimationFrame(updateAndDraw);
+            }
+            await updateAndDraw();
+        }
+
+        main();
+    </script>
+</body>
+</html>
