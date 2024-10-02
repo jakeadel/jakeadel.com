@@ -262,8 +262,8 @@ async function populateScoreboard(winCounts) {
     scoreboardContainer.appendChild(gameTallyClone);
   }
   console.log({overall_scores})
-  console.log(overall_scores["Bianca"] % 99)
-  if (overall_scores["Bianca"] % 99 === 0) {
+
+  if (overall_scores["Bianca"] % 100 === 0) {
     celebrate("Bianca", overall_scores["Bianca"])
   }
 
