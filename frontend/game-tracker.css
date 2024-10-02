@@ -44,6 +44,7 @@ body {
   left: calc(50vw - 160px);
   top: calc(50vh - 50px);
   animation: bigWinner 5s ease-in-out infinite;
+  box-shadow: 10px;
 }
 
 @keyframes bigWinner {
@@ -83,7 +84,10 @@ body {
   80% { transform: translateX(-2px) scale(1.5); }
   82% { transform: translateX(2px) scale(1.5); }
 
-  90% { transform: scale(1.5) rotate(360deg);}
+  90% { transform: scale(1.5) rotate(360deg); 
+        -webkit-transform: scale(1.5) rotate(360deg);
+        -moz-transform: scale(1.5) rotate(360deg);
+  }
   100% { transform: scale(1); }
 }
 
