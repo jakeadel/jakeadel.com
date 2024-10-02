@@ -16,7 +16,7 @@ body {
   background-color: orange;
   margin-right: auto;
   margin-left: auto;
-  margin-top: 50vh;
+  margin-top: 20vh;
   margin-bottom: 50vh;
   transition: opacity 0.5s ease-in-out;
 }
