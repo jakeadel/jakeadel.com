@@ -8,7 +8,7 @@ exports.handler = async (event, context) => {
         // ID of your Google Sheets spreadsheet
         const spreadsheetId = process.env.SHEET_ID;
         // Range of cells to retrieve data from
-        const range = 'A2:D100';
+        const range = 'A2:D500';
 
         // Fetch data from Google Sheets API
         const response = await sheets.spreadsheets.values.get({

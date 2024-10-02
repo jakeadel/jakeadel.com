@@ -7,6 +7,25 @@ body {
 	
 }
 
+.throbber {
+  animation: throb 1.5s;
+  animation-iteration-count: infinite;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: orange;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 50vh;
+  margin-bottom: 50vh;
+  transition: opacity 0.5s ease-in-out;
+}
+
+@keyframes throb {
+  50% { width: 150px; height: 150px; border-radius: 10%; background-color: pink; transform: rotate(90deg)}
+  100% { width: 100px; height: 100px; border-radius: 50%; background-color: orange; transform: rotate(90deg)}
+}
+
 #data-table {
   border-collapse: collapse;
   width: 100%;
@@ -42,6 +61,12 @@ body {
   font-family: "Roboto", sans-serif;
   font-weight: 700;
   font-style: normal;
+}
+
+#tracker-wrapper {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
 }
 
 .info-box {
@@ -167,7 +192,7 @@ body {
 
 .leader-header {
 	margin: 0;
-    margin-top: 5px;
+  margin-top: 5px;
 }
 
 .game-name-wrapper {
@@ -175,11 +200,11 @@ body {
 }
 
 .game-image {
-	aspect-ratio: 16 / 9;
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-    border-bottom: solid 1px black;
+  aspect-ratio: 16 / 9;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-bottom: solid 1px black;
 }

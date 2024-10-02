@@ -54,6 +54,7 @@ async function handleUpdate() {
   let MTrains = await makeRequest('https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-bdfm')
   let JZTrains = await makeRequest('https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-jz')
   let freshTrains = MTrains.concat(JZTrains)
+  console.log(JSON.stringify(freshTrains))
 
   let freshTrainsMap = new Map();
   freshTrains.forEach((train) => {
@@ -96,12 +97,12 @@ const interval = setInterval(handleUpdate, 10000);
 
 async function makeRequest(url) {
   if (!process.env.MTA_KEY) {
-    throw Error("MTA_KEY not set.")
+    // throw Error("MTA_KEY not set.")
   }
   let options = {
     method: 'GET',
     url: url,
-    headers: { "x-api-key": process.env.MTA_KEY},
+   // headers: { "x-api-key": process.env.MTA_KEY},
     encoding: null
   };
 

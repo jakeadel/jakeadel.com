@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="game-tracker.css">
-<title>Google Sheets Data</title>
+<title>Did Bianca Win Again?</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,66 +24,68 @@
 
 </head>
 <body>
-
-<div id="overall-score-wrapper" class="overall-score-wrapper">
-  <h2 class="overall-score-header">Leader Across All Games<h2>
-  <h1 class="overall-score-leader"></h1>
-  <div class="player-scores">
-    <h3 class="score-header">All-Time Score</h3>
-    <div class= "info-wrapper">
-      <div class="info-box">
-        <h2 class="leader-name"></h2>
-        <div class="overall-count-wrapper">
-          <h2 class="leader-count"></h2>
+<div class="throbber" id="throbber"></div>
+<div id="tracker-wrapper">
+  <div id="overall-score-wrapper" class="overall-score-wrapper">
+    <h2 class="overall-score-header">Leader Across All Games<h2>
+    <h1 class="overall-score-leader"></h1>
+    <div class="player-scores">
+      <h3 class="score-header">All-Time Score</h3>
+      <div class= "info-wrapper">
+        <div class="info-box">
+          <h2 class="leader-name"></h2>
+          <div class="overall-count-wrapper">
+            <h2 class="leader-count"></h2>
+          </div>
         </div>
-      </div>
-      <div class="info-box">
-        <h2 class="loser-name"></h2>
-        <div class="overall-count-wrapper">
-          <h2 class="loser-count"></h2>
+        <div class="info-box">
+          <h2 class="loser-name"></h2>
+          <div class="overall-count-wrapper">
+            <h2 class="loser-count"></h2>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-</div>
-<div id="scoreboard"></div>
-
-<table id="data-table">
-  <tr>
-    <thead>
-      <th>Timestamp</th>
-      <th>Game</th>
-      <th>Winner</th>
-      <th>Thoughts</th>
-    </thead>
-    <tbody>
-    </tbody>
-  </tr>
-</table>
-
-<div class="game-tally-template">
-  <div class="game-name-wrapper">
-    <img class="game-image"></img>
-    <h1 class="game-name"></h1>
   </div>
-  <div class="leader-wrapper">
-    <h3 class="leader-header"></h3>
-    <h1 class="current-leader"></h1>
-  </div>
-  <div class="player-scores">
-    <h3 class="score-header">All-Time Score</h3>
-    <div class= "info-wrapper">
-      <div class="info leader-info">
-        <h2 class="leader-name"></h2>
-        <div class="count-wrapper">
-          <h2 class="leader-count"></h2>
+  <div id="scoreboard"></div>
+
+  <table id="data-table">
+    <tr>
+      <thead>
+        <th>Timestamp</th>
+        <th>Game</th>
+        <th>Winner</th>
+        <th>Thoughts</th>
+      </thead>
+      <tbody>
+      </tbody>
+    </tr>
+  </table>
+
+  <div class="game-tally-template">
+    <div class="game-name-wrapper">
+      <img class="game-image"></img>
+      <h1 class="game-name"></h1>
+    </div>
+    <div class="leader-wrapper">
+      <h3 class="leader-header"></h3>
+      <h1 class="current-leader"></h1>
+    </div>
+    <div class="player-scores">
+      <h3 class="score-header">All-Time Score</h3>
+      <div class= "info-wrapper">
+        <div class="info leader-info">
+          <h2 class="leader-name"></h2>
+          <div class="count-wrapper">
+            <h2 class="leader-count"></h2>
+          </div>
         </div>
-      </div>
-      <div class="info loser-info">
-        <h2 class="loser-name"></h2>
-        <div class="count-wrapper">
-          <h2 class="loser-count"></h2>
+        <div class="info loser-info">
+          <h2 class="loser-name"></h2>
+          <div class="count-wrapper">
+            <h2 class="loser-count"></h2>
+          </div>
         </div>
       </div>
     </div>
@@ -259,7 +261,20 @@ async function populateScoreboard(winCounts) {
     scoreboardContainer.appendChild(gameTallyClone);
   }
   console.log({overall_scores})
+  console.log(overall_scores["Bianca"] % 99)
+  if (overall_scores["Bianca"] % 99 === 0) {
+    celebrate("Bianca", overall_scores["Bianca"])
+  }
+
   populateOverall(overall_scores);
+}
+
+function celebrate(player, count) {
+  if (player === "Bianca") {
+    console.log("Bianca winner wooo")
+    // WOOO
+
+  }
 }
 
 
@@ -320,6 +335,14 @@ async function presentData() {
   await populateTable(data);
   const winCounts = calcWinCounts(data);
   populateScoreboard(winCounts);
+  const trackerDisplay = document.getElementById('tracker-wrapper');
+  const throbber = document.getElementById('throbber');
+  trackerDisplay.style.display = 'block';
+  throbber.style.opacity = 0;
+  setTimeout(() => {
+    trackerDisplay.style.opacity = 1;
+    throbber.style.display = 'none'
+  }, 500)
 }
 
 presentData();
