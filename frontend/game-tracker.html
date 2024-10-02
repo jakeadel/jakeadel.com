@@ -25,6 +25,7 @@
 </head>
 <body>
 <div class="throbber" id="throbber"></div>
+<div class="big-winner" id="big-winner"></div>
 <div id="tracker-wrapper">
   <div id="overall-score-wrapper" class="overall-score-wrapper">
     <h2 class="overall-score-header">Leader Across All Games<h2>
@@ -270,13 +271,20 @@ async function populateScoreboard(winCounts) {
 }
 
 function celebrate(player, count) {
+  console.log("Lets celebrate", player, "!")
+  const bigWinner = document.getElementById('big-winner');
+  bigWinner.style.display = 'flex';
   if (player === "Bianca") {
-    console.log("Bianca winner wooo")
-    // WOOO
-
+    bigWinner.style.backgroundColor = 'pink';
   }
+  else if (player === "Jake") {
+    bigWinner.style.backgroundColor = 'orange';
+  }
+  bigWinner.textContent = `${player} hit ${count}!`;
+  setTimeout(() => {
+    bigWinner.style.opacity = 1; 
+  }, 500);
 }
-
 
 function populateOverall(overall_scores) {
   const names = Object.keys(overall_scores);
