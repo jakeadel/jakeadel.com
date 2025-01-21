@@ -26,18 +26,28 @@
         th {
             background-color: #f2f2f2;
         }
+
+        #thoughts {
+            padding: 10px;
+            border: 1px black solid;
+            display: flex;
+            flex-direction: column;
+        }
+
     </style>
 </head>
 <body>
     <canvas id="boidsCanvas" width="800" height="800"></canvas>
     <div id="infoPanel"></div>
-    <p>Attempting to implement a boid simulation.</p>
-    <p>Inspired by: <a href="https://www.youtube.com/watch?v=bqtqltqcQhw&t=339s">Sebastian Lague's great video on the topic.</a></p>
-    <p>And implemented following this <a href="https://vergenet.net/~conrad/boids/pseudocode.html">guide.</a></p>
-    <p>I became interested in boids recently after watching the linked video and doing some reading on emergent behavior.</p>
-    <p>It reminded me of Conway's Game of Life which I'd previously implemented in JS so I decided to give it a go.</p>
-    <p>Having recently discovered Zig and WASM, I decided to implement the meat of the program in Zig, compile it to WASM, and pull it altogether on a JS canvas.</p>
-    <p>I think it has come together fairly well, though there is definitely some tweaking to be done. In the future I would like to add in a few more features like a user controlled boid, wind, and additional barriers.</p>
+    <div id="thoughts">
+        <p>Attempting to implement a boid simulation.</p>
+        <p>Inspired by: <a href="https://www.youtube.com/watch?v=bqtqltqcQhw&t=339s">Sebastian Lague's great video on the topic.</a></p>
+        <p>And implemented following this <a href="https://vergenet.net/~conrad/boids/pseudocode.html">guide.</a></p>
+        <p>I became interested in boids recently after watching the linked video and doing some reading on emergent behavior.</p>
+        <p>It reminded me of Conway's Game of Life which I'd previously implemented in JS so I decided to give it a go.</p>
+        <p>Having recently discovered Zig and WASM, I decided to implement the meat of the program in Zig, compile it to WASM, and pull it altogether on a JS canvas.</p>
+        <p>I think it has come together fairly well, though there is definitely some tweaking to be done. In the future I'd like to add in a few more featuresincluding a user controlled boid, wind, and additional barriers.</p>
+    </div>
     <script>
         const canvas = document.getElementById('boidsCanvas');
         const ctx = canvas.getContext('2d');
@@ -208,12 +218,11 @@
                 wasm.exports.moveBoids(800, 800);
                 const centerOfMass = getCenterOfMass(wasm);
                 drawBoids(boids, centerOfMass);
-                updateInfoPanel(boids, centerOfMass);
+                //updateInfoPanel(boids, centerOfMass);
                 requestAnimationFrame(updateAndDraw);
             }
             await updateAndDraw();
         }
-
         main();
     </script>
 </body>
